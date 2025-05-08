@@ -11,7 +11,7 @@ jobs:
             install: true
             fix: true
             test: true
-            build: false
+            build: true
             check: false
 
     validate:

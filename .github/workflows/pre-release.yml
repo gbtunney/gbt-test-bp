@@ -11,10 +11,10 @@ jobs:
         uses: ./.github/workflows/setup-node-pnpm.yml
         with:
             install: true
-            fix: true
-            test: false
             build: true
-            check: false
+            fix: true
+            test: true
+            check: true
 
     finalize:
         runs-on: ubuntu-latest
