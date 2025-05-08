@@ -1,6 +1,8 @@
 name: 🐌 Snailicide Build
+
 on:
     push:
+
 jobs:
     setup:
         name: 'Setup'
@@ -8,19 +10,28 @@ jobs:
         with:
             install: true
             fix: true
-            test: truw
+            test: true
             build: true
             check: true
 
     build:
-        name: 'Build  🏗️'
+        name: 'Build  📗️'
         runs-on: ubuntu-latest
         steps:
-            - run: echo 'Build Success 🐌';
+            - name: Debug Build Start
+              run: echo '🔍 Starting build step...'
+
+            - name: Confirm Build Success
+              run: echo 'Build Success 🐌'
 
             - name: Trace branch 🚨
               run: |
+                  echo '🔍 Running git status and branch:'
                   git status
                   git branch
 
-            - run: echo "🍏 This job's status is ${{ job.status }}."
+            - name: Debug Job Status
+              run: echo "🍏 This job's status is ${{ job.status }}."
+
+            - name: Debug Build End
+              run: echo '✅ Finished build step.'
