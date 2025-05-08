@@ -34,7 +34,7 @@
         "\n========== CHECK >> ==========": "",
         "check": "pnpm check:self",
         "check:md": "pnpm run lint:md",
-        "check:self": "pnpm lint",
+        "check:self": "pnpm lint && pnpm prettier --check",
         "\n========== FIX >> ==========": "",
         "fix": "pnpm fix:self",
         "fix:md": "pnpm run lint:md --fix",
