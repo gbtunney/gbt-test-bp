@@ -61,11 +61,3 @@ jobs:
             - name: ✅ Lint and check
               if: ${{ inputs.check }}
               run: pnpm check
-
-            - name: 📊 Log repo status
-              id: log
-              uses: ./.github/workflows/log-repo-status.yml
-              with:
-                  LOG_DIRTY_FILES: true
-                  LOG_IGNORED: true
-                  DEBUG: true
