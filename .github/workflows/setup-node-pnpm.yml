@@ -67,7 +67,7 @@ jobs:
               run: pnpm install --frozen-lockfile
 
             - if: inputs.build == true
-                  run: pnpm build
+              run: pnpm build
 
             - if: inputs.fix == true
               run: pnpm fix
