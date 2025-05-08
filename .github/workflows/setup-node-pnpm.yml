@@ -4,22 +4,25 @@ on:
     workflow_call:
         inputs:
             install:
-                {
-                    type: boolean,
-                    default: true,
-                    description: 'Run pnpm install',
-                }
+                type: boolean
+                default: true
+                description: 'Run pnpm install'
             build:
-                { type: boolean, default: false, description: 'Run pnpm build' }
-            fix: { type: boolean, default: false, description: 'Run pnpm fix' }
+                type: boolean
+                default: false
+                description: 'Run pnpm build'
+            fix:
+                type: boolean
+                default: false
+                description: 'Run pnpm fix'
             test:
-                { type: boolean, default: false, description: 'Run pnpm test' }
+                type: boolean
+                default: false
+                description: 'Run pnpm test'
             check:
-                {
-                    type: boolean,
-                    default: false,
-                    description: 'Run pnpm lint/check',
-                }
+                type: boolean
+                default: false
+                description: 'Run pnpm lint/check'
 
         outputs:
             ready:
@@ -52,28 +55,35 @@ jobs:
             changed_all: ${{ steps.repo.outputs.changed_all }}
         steps:
             - uses: actions/checkout@v4
+
             - uses: actions/setup-node@v4
               with:
                   node-version: 20
                   cache: 'pnpm'
+
             - uses: pnpm/action-setup@v2
               with:
                   version: 8
-                  run_install: false
+
             - if: inputs.install == true
               run: pnpm install --frozen-lockfile
+
             - if: inputs.fix == true
               run: pnpm fix
+
             - if: inputs.test == true
               run: pnpm test
+
             - if: inputs.check == true
               run: pnpm lint || pnpm check || true
+
             - if: inputs.build == true
               run: pnpm build
+
             - id: repo
               uses: ./.github/workflows/log-repo-status.yml
               with:
-                  LOG_DIRTY_FILES: true
-                  LOG_IGNORED: true
-                  DEBUG: true
+                  LOG_DIRTY_FILES: false
+                  LOG_IGNORED: false
+                  DEBUG: false
                   includes: 'dist,docs,storybook-static,types'
