@@ -1,11 +1,11 @@
-name: 🐌 Snailicide Build
+name: 🧱 Build Workflow
 
 on:
     push:
+        branches: [main]
 
 jobs:
     setup:
-        name: 'Setup'
         uses: ./.github/workflows/setup-node-pnpm.yml
         with:
             install: true
@@ -14,18 +14,29 @@ jobs:
             build: true
             check: true
 
-    build:
-        name: 'Build  📗️'
+    log:
+        uses: ./.github/workflows/log-repo-status.yml
+        needs: setup
+        with:
+            LOG_DIRTY_FILES: true
+            LOG_IGNORED: true
+            DEBUG: true
+
+    validate:
+        name: ✅ Continue if clean
         runs-on: ubuntu-latest
+        needs: log
+        if: needs.log.outputs.dirty == 'false'
         steps:
-            - name: Debug Build Start
-              run: echo '🔍 Starting build step...'
+            - run: echo "Repo is clean, build successful!"
 
-            - name: Confirm Build Success
-              run: echo 'Build Success 🐌'
-
-            - name: Debug Job Status
-              run: echo "🍏 This job's status is ${{ job.status }}."
-
-            - name: Debug Build End
-              run: echo '✅ Finished build step.'
+    block:
+        name: ❌ Stop if dirty
+        runs-on: ubuntu-latest
+        needs: log
+        if: needs.log.outputs.dirty == 'true'
+        steps:
+            - run: |
+                  echo "Dirty files found, halting pipeline."
+                  echo '${{ needs.log.outputs.files }}' | jq .
+                  exit 1

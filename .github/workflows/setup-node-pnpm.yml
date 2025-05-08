@@ -6,82 +6,48 @@ on:
             install:
                 type: boolean
                 default: true
-                description: 'Run pnpm install'
             build:
                 type: boolean
                 default: false
-                description: 'Run pnpm build'
             fix:
                 type: boolean
                 default: false
-                description: 'Run pnpm fix'
             test:
                 type: boolean
                 default: false
-                description: 'Run pnpm test'
             check:
                 type: boolean
                 default: false
-                description: 'Run pnpm lint/check'
-
         outputs:
-            ready:
-                value: 'true'
-            status:
-                value: ${{ jobs.setup.outputs.status }}
             dirty:
-                value: ${{ jobs.setup.outputs.dirty }}
+                value: ${{ jobs.repo.outputs.dirty }}
             files:
-                value: ${{ jobs.setup.outputs.files }}
-            ignored_files:
-                value: ${{ jobs.setup.outputs.ignored_files }}
-            count:
-                value: ${{ jobs.setup.outputs.counts }}
-            changed:
-                value: ${{ jobs.setup.outputs.changed }}
-            changed_all:
-                value: ${{ jobs.setup.outputs.changed_all }}
+                value: ${{ jobs.repo.outputs.files }}
 
 jobs:
+    repo:
+        uses: ./.github/workflows/log-repo-status.yml
+        with:
+            LOG_DIRTY_FILES: true
+            LOG_IGNORED: true
+            DEBUG: true
+
     setup:
         runs-on: ubuntu-latest
-        outputs:
-            status: ${{ steps.repo.outputs.status }}
-            dirty: ${{ steps.repo.outputs.dirty }}
-            files: ${{ steps.repo.outputs.files }}
-            ignored_files: ${{ steps.repo.outputs.ignored_files }}
-            counts: ${{ steps.repo.outputs.count }}
-            changed: ${{ steps.repo.outputs.changed }}
-            changed_all: ${{ steps.repo.outputs.changed_all }}
+        needs: repo
         steps:
             - uses: actions/checkout@v4
-
             - uses: actions/setup-node@v4
               with:
                   node-version: '20.11.1'
-
-            - name: Manually install pnpm
-              run: npm install -g pnpm
-
-            - if: inputs.install == true
+            - run: npm install -g pnpm
+            - if: ${{ inputs.install }}
               run: pnpm install --frozen-lockfile
-
-            - if: inputs.build == true
+            - if: ${{ inputs.build }}
               run: pnpm build
-
-            - if: inputs.fix == true
+            - if: ${{ inputs.fix }}
               run: pnpm fix
-
-            - if: inputs.test == true
+            - if: ${{ inputs.test }}
               run: pnpm test
-
-            - if: inputs.check == true
+            - if: ${{ inputs.check }}
               run: pnpm check
-
-            - id: repo
-              uses: ./.github/workflows/log-repo-status.yml
-              with:
-                  LOG_DIRTY_FILES: true
-                  LOG_IGNORED: true
-                  DEBUG: true
-                  includes: 'dist,docs,storybook-static,types'
