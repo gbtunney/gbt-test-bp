@@ -1,13 +1,13 @@
 /** Install in workspace by deleting top level stuff */
 import { merge } from '@snailicide/build-config'
 import shell from 'shelljs'
+import basePkg from './../package.json' assert { type: 'json' }
 import monorepoPkg from './monorepo.package.json' assert { type: 'json' }
-import basePkg from './package.json' assert { type: 'json' }
 
 const FILES = [
     './src',
     './.gitignore',
-    '/tsconfig.json',
+    './tsconfig.json',
     './package.json',
     './README.md',
     './rollup.config.ts',

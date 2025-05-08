@@ -1,0 +1,14 @@
+{
+    "extends": "@snailicide/build-config/tsconfig-base",
+    "compilerOptions": {
+        "rootDir": ".",
+        "types": ["node"]
+    },
+    "exclude": ["./node_modules", "./*.ts"],
+    "files": [
+        "./.lintstagedrc.mts",
+        "./.markdownlint-cli2.mts",
+        "./commitlint.config.ts",
+        "./prettier.config.ts"
+    ]
+}
