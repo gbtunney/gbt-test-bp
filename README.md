@@ -43,6 +43,12 @@ laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in repreh
 dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
 mollit anim id est laborum.
 
+## TODO
+
+- The path `$(git rev-parse --show-toplevel)/$npm_package_config_eslint_config` errors when it's in a root repo, it
+  should not do thiis.
+-
+
 ## Installation
 
 ```shell
