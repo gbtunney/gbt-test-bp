@@ -1,0 +1,31 @@
+name: 🐌 Snailicide Build
+on:
+    push:
+jobs:
+    build:
+        name: 'Build  🏗️'
+        runs-on: ubuntu-latest
+        steps:
+            - run: echo 'Archive Snailicide Monorepo 🐌';
+
+            - name: Checkout 🛎️
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js environment 🛎️
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '21.7.3'
+
+            - name: Install pnpm 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
+              run: |
+                  npm install -g pnpm
+                  pnpm install --no-frozen-lockfile
+
+            - name: Build, Lint and Unit Tests 🚨
+              run: |
+                  pnpm run build && pnpm run fix && pnpm run check && pnpm test
+                  - run: |
+                      git status
+                      git branch
+
+            - run: echo "🍏 This job's status is ${{ job.status }}."
