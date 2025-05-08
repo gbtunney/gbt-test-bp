@@ -29,7 +29,7 @@ on:
                 default: false
             includes:
                 type: string
-                default: 'dist,docs,storybook-static,types'
+                default: 'node_modules,dist,docs,storybook-static,types'
 
         outputs:
             status:
