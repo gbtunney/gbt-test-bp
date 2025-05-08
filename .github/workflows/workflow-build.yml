@@ -8,9 +8,9 @@ jobs:
         uses: ./.github/workflows/setup-node-pnpm.yml
         with:
             install: true
+            build: true
             fix: true
             test: true
-            build: true
             check: true
 
     log:
