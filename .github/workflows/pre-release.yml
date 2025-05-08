@@ -1,0 +1,24 @@
+name: ⏳ Pre-Release
+
+on:
+    pull_request:
+        branches: [main]
+        paths:
+            - .changeset/**
+
+jobs:
+    setup:
+        uses: ./.github/workflows/setup-node-pnpm.yml
+        with:
+            install: true
+            fix: true
+            test: false
+            build: true
+            check: false
+
+    finalize:
+        runs-on: ubuntu-latest
+        needs: setup
+        steps:
+            - uses: actions/checkout@v4
+            - run: echo "🛠 Format and docs changes go here"
