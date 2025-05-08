@@ -1,63 +1,109 @@
 name: setup-node-pnpm
 
 on:
-    workflow_call:
-        inputs:
-            install:
-                type: boolean
-                default: true
-            build:
-                type: boolean
-                default: true
-            fix:
-                type: boolean
-                default: false
-            test:
-                type: boolean
-                default: false
-            check:
-                type: boolean
-                default: false
-        outputs:
-            dirty:
-                value: ${{ jobs.setup.outputs.dirty }}
-            files:
-                value: ${{ jobs.setup.outputs.files }}
+  workflow_call:
+    inputs:
+      install:
+        type: boolean
+        default: true
+      build:
+        type: boolean
+        default: true
+      fix:
+        type: boolean
+        default: false
+      test:
+        type: boolean
+        default: false
+      check:
+        type: boolean
+        default: false
+    outputs:
+      dirty:
+        value: ${{ jobs.setup.outputs.dirty }}
+      files:
+        value: ${{ jobs.setup.outputs.files }}
 
 jobs:
-    setup:
-        runs-on: ubuntu-latest
-        outputs:
-            dirty: ${{ steps.log.outputs.dirty }}
-            files: ${{ steps.log.outputs.files }}
-        steps:
-            - name: 🛎️ Checkout repository
-              uses: actions/checkout@v4
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      dirty: ${{ steps.repo_status.outputs.dirty }}
+      files: ${{ steps.repo_status.outputs.dirty_files }}
+    steps:
+      - name: 🛎️ Checkout repository
+        uses: actions/checkout@v4
 
-            - name: 🧰 Set up Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: '20.11.1'
+      - name: 🧰 Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.11.1'
 
-            - name: 📦 Install pnpm
-              run: npm install -g pnpm
+      - name: 📦 Install pnpm
+        run: npm install -g pnpm
 
-            - name: 📥 Install dependencies
-              if: ${{ inputs.install }}
-              run: pnpm install --frozen-lockfile
+      - name: 📥 Install dependencies
+        if: ${{ inputs.install }}
+        run: pnpm install --frozen-lockfile
 
-            - name: 🛠️ Build packages
-              if: ${{ inputs.build }}
-              run: pnpm build
+      - name: 🛠️ Build packages
+        if: ${{ inputs.build }}
+        run: pnpm build
 
-            - name: 🔧 Auto-fix code
-              if: ${{ inputs.fix }}
-              run: pnpm fix
+      - name: 🔧 Auto-fix code
+        if: ${{ inputs.fix }}
+        run: pnpm fix
 
-            - name: 🧪 Run tests
-              if: ${{ inputs.test }}
-              run: pnpm test
+      - name: 🧪 Run tests
+        if: ${{ inputs.test }}
+        run: pnpm test
 
-            - name: ✅ Lint and check
-              if: ${{ inputs.check }}
-              run: pnpm check
+      - name: ✅ Lint and check
+        if: ${{ inputs.check }}
+        run: pnpm check
+
+      - name: 📊 Check dirty/ignored status after setup
+        id: repo_status
+        shell: bash
+        run: |
+          git status --porcelain | awk '{print $2}' | jq -R -s -c 'split("\n")[:-1]' > dirty.json
+          dirty=$(cat dirty.json)
+
+          all_ignored=$(git ls-files --others -i --exclude-standard | sort | uniq)
+          echo "$all_ignored" | jq -R -s -c 'split("\n")[:-1]' > ignored_all.json
+
+          includes="dist,docs,storybook-static,types"
+          IFS=',' read -ra patterns <<< "$includes"
+          echo "$all_ignored" > all.tmp
+          echo "" > match.tmp
+          for pattern in "${patterns[@]}"; do
+            grep -E "$pattern" all.tmp >> match.tmp 2>/dev/null || true
+          done
+          sort -u match.tmp | jq -R -s -c 'split("\n")[:-1]' > ignored_filtered.json
+
+          echo "🔍 Dirty files:"
+          cat dirty.json | jq .
+          echo "🔍 Ignored files (filtered):"
+          cat ignored_filtered.json | jq .
+          echo "🔍 Ignored files (all):"
+          cat ignored_all.json | jq .
+
+          count_dirty=$(cat dirty.json | jq length)
+          count_ignored=$(cat ignored_filtered.json | jq length)
+          count_ignored_all=$(cat ignored_all.json | jq length)
+          changed=$(jq -s 'add' dirty.json ignored_filtered.json)
+          changed_all=$(jq -s 'add' dirty.json ignored_all.json)
+          count_changed=$(echo "$changed" | jq length)
+          count_changed_all=$(echo "$changed_all" | jq length)
+
+          counts=$(jq -n             --argjson d $count_dirty             --argjson i $count_ignored             --argjson ia $count_ignored_all             --argjson c $count_changed             --argjson ca $count_changed_all             '{dirty: $d, ignored: $i, ignored_all: $ia, changed: $c, changed_all: $ca}')
+
+          echo "🔢 Count summary:"
+          echo "$counts" | jq .
+
+          echo "dirty=$( [[ $count_dirty -gt 0 ]] && echo true || echo false )" >> $GITHUB_OUTPUT
+          echo "dirty_files=$dirty" >> $GITHUB_OUTPUT
+          echo "ignored_filtered=$(cat ignored_filtered.json)" >> $GITHUB_OUTPUT
+          echo "counts=$(jq -c '.' <<< "$counts")" >> $GITHUB_OUTPUT
+          echo "changed=$changed" >> $GITHUB_OUTPUT
+          echo "changed_all=$changed_all" >> $GITHUB_OUTPUT

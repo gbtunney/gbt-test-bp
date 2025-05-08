@@ -13,13 +13,6 @@ jobs:
             test: true
             check: true
 
-    log:
-        uses: ./.github/workflows/log-repo-status.yml
-        needs: setup
-        with:
-            LOG_DIRTY_FILES: true
-            LOG_IGNORED: true
-            DEBUG: true
 
     validate:
         name: ✅ Continue if clean
