@@ -24,12 +24,6 @@ jobs:
             - name: Confirm Build Success
               run: echo 'Build Success 🐌'
 
-            - name: Trace branch 🚨
-              run: |
-                  echo '🔍 Running git status and branch:'
-                  git status
-                  git branch
-
             - name: Debug Job Status
               run: echo "🍏 This job's status is ${{ job.status }}."
 

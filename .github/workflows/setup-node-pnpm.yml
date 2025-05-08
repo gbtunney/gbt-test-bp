@@ -73,7 +73,7 @@ jobs:
             - id: repo
               uses: ./.github/workflows/log-repo-status.yml
               with:
-                  LOG_DIRTY_FILES: false
-                  LOG_IGNORED: false
-                  DEBUG: false
+                  LOG_DIRTY_FILES: true
+                  LOG_IGNORED: true
+                  DEBUG: true
                   includes: 'dist,docs,storybook-static,types'
