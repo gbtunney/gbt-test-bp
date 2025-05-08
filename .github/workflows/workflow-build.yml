@@ -12,7 +12,7 @@ jobs:
             fix: true
             test: true
             check: true
-
+            DEBUG: true
 
     validate:
         name: ✅ Continue if clean
