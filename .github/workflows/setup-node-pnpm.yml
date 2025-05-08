@@ -61,9 +61,8 @@ jobs:
                   node-version: 20
                   cache: 'pnpm'
 
-            - uses: pnpm/action-setup@v2
-              with:
-                  version: 8
+            - name: Manually install pnpm
+              run: npm install -g pnpm
 
             - if: inputs.install == true
               run: pnpm install --frozen-lockfile
@@ -83,7 +82,7 @@ jobs:
             - id: repo
               uses: ./.github/workflows/log-repo-status.yml
               with:
-                  LOG_DIRTY_FILES: false
-                  LOG_IGNORED: false
-                  DEBUG: false
+                  LOG_DIRTY_FILES: true
+                  LOG_IGNORED: true
+                  DEBUG: true
                   includes: 'dist,docs,storybook-static,types'
