@@ -66,6 +66,9 @@ jobs:
             - if: inputs.install == true
               run: pnpm install --frozen-lockfile
 
+            - if: inputs.build == true
+                  run: pnpm build
+
             - if: inputs.fix == true
               run: pnpm fix
 
@@ -73,10 +76,7 @@ jobs:
               run: pnpm test
 
             - if: inputs.check == true
-              run: pnpm lint || pnpm check || true
-
-            - if: inputs.build == true
-              run: pnpm build
+              run: pnpm check
 
             - id: repo
               uses: ./.github/workflows/log-repo-status.yml
