@@ -155,6 +155,6 @@ jobs:
                     --argjson c $count_changed \
                     --argjson ca $count_changed_all \
                     '{dirty: $d, ignored: $i, ignored_all: $ia, changed: $c, changed_all: $ca}')
-
+                  echo $counts;
                   echo "status=${{ steps.detect.outputs.status }}" >> $GITHUB_OUTPUT
                   echo "dirty=${{ steps.detect.outputs.dirty }}" >> $GITHUB_OUTPUT
