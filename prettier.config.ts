@@ -6,9 +6,9 @@ const overrides: PrettierConfig = {
         {
             files: '**/*.md',
             options: {
-                printWidth: 120,
-                proseWrap: 'always',
-                tabWidth: 4,
+                //printWidth: 80,
+                //proseWrap: 'always',
+                //tabWidth: 4,
             },
         },
     ],
