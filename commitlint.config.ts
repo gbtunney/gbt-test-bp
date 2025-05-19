@@ -3,11 +3,12 @@
  * @author Gillian Tunney
  * @see [commitlint - Lint commit messages](https://commitlint.js.org/#/)
  */
-import type { UserConfig as CommitlintUserConfig } from '@commitlint/types'
-import { commitlint /*CommitlintUserConfig*/ } from '@snailicide/build-config'
+import { commitlint, CommitlintUserConfig } from '@snailicide/build-config'
 
 const Configuration: CommitlintUserConfig = commitlint.configuration([
     'root',
+    'system-utils',
+    '@gbt/example-package',
     'todo:fix disable scope',
 ])
 

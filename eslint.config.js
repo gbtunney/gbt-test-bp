@@ -8,7 +8,7 @@ const FLAT_CONFIG = await EsLint.flatConfig(__dirname)
 export default [
     ...FLAT_CONFIG,
     {
-        ignores: ['**/.history/**', '**/*.map'],
+        ignores: ['**/.history/**', '**/scratch/**', '**/*.map'],
     },
     ...tsEslint.config({
         extends: [tsEslint.configs.disableTypeChecked],

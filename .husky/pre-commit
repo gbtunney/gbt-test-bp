@@ -2,7 +2,7 @@
 
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 PROTECTED_BRANCHES="^(master|main)"
-LINT_MODE="LINT_ALL" # other values: LINT_ALL | DISABLED
+LINT_MODE="LINT_STAGED" # other values: LINT_ALL | DISABLED
 
 echo "\n===\n>> Running in shell:: $SHELL"
 echo ">> Pre-commit Hook:: Checking BRANCH: $BRANCH LINT_MODE: $LINT_MODE \n===\n"
@@ -22,15 +22,14 @@ fi
 if [[ "$LINT_MODE" == 'LINT_ALL' ]]; then
     echo -e "\n🚫 LINT_ALL ($BRANCH), checking + fixing ALL FILES  before commit \n"
     # Run formatter,lint
-    pnpm run prepare:all
+    pnpm lint:all
     # Add the fixed files that were staged
     git add $(git diff HEAD --diff-filter=MAR --cached --name-only)
 fi
 
 if [[ "$LINT_MODE" == 'LINT_STAGED' ]]; then
-    echo -e "\n🚫 LINT_STAGED ($BRANCH), running lint-staged before commit \n"
+    echo -e "\n🚫 LINT_STAGED ($BRANCH), running lint-staged before commitizen \n"
     # Run lint staged
-    pnpm run pre:commit
 fi
 
 exit 0

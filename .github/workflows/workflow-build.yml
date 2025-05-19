@@ -1,31 +1,34 @@
-name: 🐌 Snailicide Build
+name: 🧱 Build Workflow
+
 on:
     push:
+
 jobs:
-    build:
-        name: 'Build  🏗️'
+    setup:
+        uses: ./.github/workflows/setup-node-pnpm.yml
+        with:
+            install: true
+            build: true
+            fix: true
+            test: true
+            check: true
+            DEBUG: true
+
+    validate:
+        name: ✅ Continue if clean
         runs-on: ubuntu-latest
+        needs: setup
+        if: needs.log.outputs.dirty == 'false'
         steps:
-            - run: echo 'Archive Snailicide Monorepo 🐌';
+            - run: echo "Repo is clean, build successful!"
 
-            - name: Checkout 🛎️
-              uses: actions/checkout@v4
-
-            - name: Setup Node.js environment 🛎️
-              uses: actions/setup-node@v4
-              with:
-                  node-version: '21.7.3'
-
-            - name: Install pnpm 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
-              run: |
-                  npm install -g pnpm
-                  pnpm install --no-frozen-lockfile
-
-            - name: Build, Lint and Unit Tests 🚨
-              run: |
-                  pnpm run build && pnpm run fix && pnpm run check && pnpm test
-                  - run: |
-                      git status
-                      git branch
-
-            - run: echo "🍏 This job's status is ${{ job.status }}."
+    block:
+        name: ❌ Stop if dirty
+        runs-on: ubuntu-latest
+        needs: setup
+        if: needs.log.outputs.dirty == 'true'
+        steps:
+            - run: |
+                  echo "Dirty files found, halting pipeline."
+                  echo '${{ needs.log.outputs.files }}' | jq .
+                  exit 1
