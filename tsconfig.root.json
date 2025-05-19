@@ -4,11 +4,7 @@
         "rootDir": ".",
         "types": ["node"]
     },
-    "exclude": ["./node_modules", "./*.ts"],
-    "files": [
-        "./.lintstagedrc.mts",
-        "./.markdownlint-cli2.mts",
-        "./commitlint.config.ts",
-        "./prettier.config.ts"
-    ]
+    "exclude": ["./node_modules"],
+    "include": ["./*.ts", "./*.cts", "./*.mts", "/*.json"],
+    "files": ["./.lintstagedrc.mts", "./.markdownlint-cli2.mts"]
 }

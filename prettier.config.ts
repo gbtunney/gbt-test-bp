@@ -12,6 +12,8 @@ const overrides: PrettierConfig = {
             },
         },
     ],
+
+    plugins: ['@prettier/plugin-xml'],
 }
 
 const default_config: PrettierConfig = Prettier.config

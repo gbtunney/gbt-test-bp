@@ -6,7 +6,7 @@ import {
 
 //TODO: figure out a way this is not utterly ridiculous
 const mdIgnores = [
-    '#**/{node_modules,.changeset,docs}/**',
+    '#**/{node_modules,.changeset,docs,scratch}/**',
     '#packages/cli-template/templates/**/*',
 ]
 
